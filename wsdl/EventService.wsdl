@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://eventscheduling.com/wsdl"
+             xmlns:sch="http://eventscheduling.com/schemas"
+             targetNamespace="http://eventscheduling.com/wsdl"
+             elementFormDefault="qualified">
+
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema"
+                targetNamespace="http://eventscheduling.com/schemas"
+                xmlns:sch="http://eventscheduling.com/schemas">
+            
+            <!-- Define importance enumeration -->
+            <simpleType name="ImportanceType">
+                <restriction base="string">
+                    <enumeration value="low"/>
+                    <enumeration value="medium"/>
+                    <enumeration value="high"/>
+                </restriction>
+            </simpleType>
+            
+            <!-- Define recurrence enumeration -->
+            <simpleType name="RecurrenceType">
+                <restriction base="string">
+                    <enumeration value="none"/>
+                    <enumeration value="daily"/>
+                    <enumeration value="weekly"/>
+                    <enumeration value="monthly"/>
+                    <enumeration value="annually"/>
+                </restriction>
+            </simpleType>
+            
+            <!-- Define participants structure -->
+            <complexType name="ParticipantsType">
+                <sequence>
+                    <element name="participant" type="string" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+            
+            <!-- Define event structure -->
+            <complexType name="EventType">
+                <sequence>
+                    <element name="id" type="string" minOccurs="0"/>
+                    <element name="title" type="string"/>
+                    <element name="agenda" type="string"/>
+                    <element name="date" type="date"/>
+                    <element name="time" type="time"/>
+                    <element name="importance" type="sch:ImportanceType"/>
+                    <element name="location" type="string"/>
+                    <element name="coordinator" type="string"/>
+                    <element name="participants" type="sch:ParticipantsType" minOccurs="0"/>
+                    <element name="recurrence" type="sch:RecurrenceType"/>
+                </sequence>
+            </complexType>
+            
+            <!-- Message elements -->
+            <element name="AddEventRequest">
+                <complexType>
+                    <sequence>
+                        <element name="eventData" type="sch:EventType"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="AddEventResponse">
+                <complexType>
+                    <sequence>
+                        <element name="return" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="GetEventRequest">
+                <complexType>
+                    <sequence>
+                        <element name="eventId" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="GetEventResponse">
+                <complexType>
+                    <sequence>
+                        <element name="event" type="sch:EventType" minOccurs="0"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="GetAllEventsRequest">
+                <complexType>
+                    <sequence/>
+                </complexType>
+            </element>
+            
+            <element name="GetAllEventsResponse">
+                <complexType>
+                    <sequence>
+                        <element name="event" type="sch:EventType" minOccurs="0" maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="UpdateEventRequest">
+                <complexType>
+                    <sequence>
+                        <element name="eventData" type="sch:EventType"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="UpdateEventResponse">
+                <complexType>
+                    <sequence>
+                        <element name="return" type="boolean"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="DeleteEventRequest">
+                <complexType>
+                    <sequence>
+                        <element name="eventId" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+            <element name="DeleteEventResponse">
+                <complexType>
+                    <sequence>
+                        <element name="return" type="boolean"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+
+    <!-- Messages -->
+    <message name="AddEventRequest">
+        <part name="parameters" element="sch:AddEventRequest"/>
+    </message>
+    <message name="AddEventResponse">
+        <part name="parameters" element="sch:AddEventResponse"/>
+    </message>
+    
+    <message name="GetEventRequest">
+        <part name="parameters" element="sch:GetEventRequest"/>
+    </message>
+    <message name="GetEventResponse">
+        <part name="parameters" element="sch:GetEventResponse"/>
+    </message>
+    
+    <message name="GetAllEventsRequest">
+        <part name="parameters" element="sch:GetAllEventsRequest"/>
+    </message>
+    <message name="GetAllEventsResponse">
+        <part name="parameters" element="sch:GetAllEventsResponse"/>
+    </message>
+    
+    <message name="UpdateEventRequest">
+        <part name="parameters" element="sch:UpdateEventRequest"/>
+    </message>
+    <message name="UpdateEventResponse">
+        <part name="parameters" element="sch:UpdateEventResponse"/>
+    </message>
+    
+    <message name="DeleteEventRequest">
+        <part name="parameters" element="sch:DeleteEventRequest"/>
+    </message>
+    <message name="DeleteEventResponse">
+        <part name="parameters" element="sch:DeleteEventResponse"/>
+    </message>
+
+    <!-- Port Type -->
+    <portType name="EventServicePortType">
+        <operation name="AddEvent">
+            <input message="tns:AddEventRequest"/>
+            <output message="tns:AddEventResponse"/>
+        </operation>
+        <operation name="GetEvent">
+            <input message="tns:GetEventRequest"/>
+            <output message="tns:GetEventResponse"/>
+        </operation>
+        <operation name="GetAllEvents">
+            <input message="tns:GetAllEventsRequest"/>
+            <output message="tns:GetAllEventsResponse"/>
+        </operation>
+        <operation name="UpdateEvent">
+            <input message="tns:UpdateEventRequest"/>
+            <output message="tns:UpdateEventResponse"/>
+        </operation>
+        <operation name="DeleteEvent">
+            <input message="tns:DeleteEventRequest"/>
+            <output message="tns:DeleteEventResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="EventServiceSoapBinding" type="tns:EventServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AddEvent">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="GetEvent">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="GetAllEvents">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="UpdateEvent">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="DeleteEvent">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="EventService">
+        <port name="EventServiceSoap" binding="tns:EventServiceSoapBinding">
+            <soap:address location="http://localhost:8000/soap"/>
+        </port>
+    </service>
+
+</definitions>
